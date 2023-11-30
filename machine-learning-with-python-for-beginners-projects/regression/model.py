@@ -1,10 +1,10 @@
-import sys
 import numpy as np
 import pandas as pd
 
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler, OneHotEncoder
 from sklearn.impute import SimpleImputer
+from sklearn.linear_model import LinearRegression
 
 import matplotlib
 import matplotlib.pyplot as plt
@@ -65,4 +65,10 @@ ohe = OneHotEncoder(dtype=int, sparse_output=False, drop='first')
 tf_cat = ohe.fit_transform(X_train[cat_col])
 
 X_train_transformed = np.concatenate((tf_num, tf_cat), axis=1)
-print(X_train_transformed[0])
+
+# Training the model
+model =  LinearRegression()
+model.fit(X_train_transformed, y_train)
+
+print("Coefficients of the model (a0, [a1, ..., an]):")
+print(model.intercept_, model.coef_)
