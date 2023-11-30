@@ -3,6 +3,8 @@ import numpy as np
 import pandas as pd
 
 from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler, OneHotEncoder
+from sklearn.impute import SimpleImputer
 
 import matplotlib
 import matplotlib.pyplot as plt
@@ -32,3 +34,35 @@ print(f"Num of invalid entries is {numInvalid}")
 # Since there are not many invalid rows, let's drop them
 df = df.drop(df[(df["Price"] < 0) | (df["Days since Last Update"] < 0)].index)
 print(f"After dropping invalid entries we get a shape of {df.shape}")
+
+# Splitting
+y = df["Rating"]
+X = df.loc[:, df.columns != "Rating"]
+
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, random_state=0)
+
+print("Correlation table: ")
+print(X_train.loc[:, X_train.columns != "Category"].corr())
+
+for col in X_train:
+    x = df[col]
+    plt.scatter(x, y)
+    plt.savefig(f"scatter_plots/{col}-plot.png")
+    plt.clf()
+
+# Data preprocessing
+num_col = X.columns[X.columns != "Category"]
+cat_col = ["Category"]
+
+imp = SimpleImputer(strategy="mean")
+tf_num = imp.fit_transform(X_train[num_col])
+
+scaler = StandardScaler()
+tf_num = scaler.fit_transform(tf_num)
+
+ohe = OneHotEncoder(dtype=int, sparse_output=False, drop='first')
+tf_cat = ohe.fit_transform(X_train[cat_col])
+
+X_train_transformed = np.concatenate((tf_num, tf_cat), axis=1)
+print(X_train_transformed[0])

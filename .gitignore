@@ -1,2 +1,2 @@
 __pycache__/
-*/*.png
+'*.jpg\n*.jpeg\n*.png\n*.gif\n'
