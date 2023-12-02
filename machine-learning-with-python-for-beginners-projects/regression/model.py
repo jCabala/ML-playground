@@ -8,6 +8,7 @@ from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_squared_error, r2_score
 from sklearn.compose import ColumnTransformer
 from sklearn.pipeline import Pipeline
+from sklearn.model_selection import cross_val_score
 
 import matplotlib
 import matplotlib.pyplot as plt
@@ -96,3 +97,13 @@ y_train_pred = predict_and_print_metrics(model, X_train_transformed, y_train)
 print("Metrics on the test set")
 X_test_transformed = transform(X_test)
 predict_and_print_metrics(model, X_test_transformed, y_test)
+
+# 4-fold cross validation on the training set
+print("4-fold cross validation metrics on the training set")
+RMSE = -cross_val_score(model, X_train_transformed, y_train, 
+                         cv=4, scoring="neg_root_mean_squared_error").mean()
+
+r2 = cross_val_score(model, X_train_transformed, y_train, 
+                         cv=4, scoring="r2").mean()
+
+print(f"RMSE={RMSE} r2={r2}")
