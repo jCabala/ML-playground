@@ -1,6 +1,8 @@
 import pandas as pd
+import numpy as np
+
 from sklearn.pipeline import Pipeline
-from sklearn.preprocessing import OneHotEncoder
+from sklearn.preprocessing import OneHotEncoder, StandardScaler
 from sklearn.model_selection import train_test_split
 from sklearn.compose import ColumnTransformer
 
@@ -19,20 +21,26 @@ X_train, X_test, y_train, y_test = train_test_split(
 # Sorting the columns into categorical and numerical
 numericalColumns, categoricalColumns = [], []
 
-for col in df:
+for col in X_train:
     entry = df[col][0]
-    print(col, type(entry))
     if type(entry) == str:
         categoricalColumns.append(col)
     else:
         numericalColumns.append(col)
 
-# Categorical data encoding 
-cat_ct = ColumnTransformer([(
-    'ohe', 
-    OneHotEncoder(dtype=int, sparse=False, drop='first'), 
-    categoricalColumns)])
+
+# Transforming columns 
+ct = ColumnTransformer([
+    ('ohe', OneHotEncoder(dtype=int, sparse_output=False, drop='first'), 
+    categoricalColumns),
+    ('scalar', StandardScaler(), numericalColumns)
+    ])
 
 
 # Creating the pipeline
-pipeline = Pipeline(('cat_encoding', cat_ct))
+pipeline = Pipeline([
+    ('ct', ct)])
+
+# Printing the results
+np.set_printoptions(threshold=np.inf)
+print(pipeline.fit_transform(X_train))
