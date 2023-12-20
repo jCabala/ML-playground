@@ -5,6 +5,7 @@ from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
 from sklearn.model_selection import train_test_split
 from sklearn.compose import ColumnTransformer
+from sklearn.decomposition import PCA
 
 # --- Reading data ---
 df = pd.read_csv("./Thyroid_Diff.csv")
@@ -37,9 +38,14 @@ ct = ColumnTransformer([
     ])
 
 
+# --- Dimensional Reduction ---
+pca = PCA(n_components=0.9)
+
 # Creating the pipeline
 pipeline = Pipeline([
-    ('ct', ct)])
+    ('ct', ct),
+    ('pca', pca)
+    ])
 
 # Printing the results
 np.set_printoptions(threshold=np.inf)
